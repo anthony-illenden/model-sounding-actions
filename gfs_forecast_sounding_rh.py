@@ -92,5 +92,5 @@ for i in range(0, 29):
     plt.xlabel('Temperature (C)')
     
     plt.title('{} GFS: Forecast Sounding | {} | FH: {}'.format(ds[ds_timedim][0].dt.strftime('%H00 UTC').item(), ds[ds_timedim][i].dt.strftime('%Y-%m-%d %H00 UTC').item(), count*3))
-    plt.savefig('plots/models/gfs/soundings/rh/sounding_{}.png'.format(i), dpi=450)
+    plt.savefig('models/gfs/sounding_{}.png'.format(i), dpi=450)
     count += 1
