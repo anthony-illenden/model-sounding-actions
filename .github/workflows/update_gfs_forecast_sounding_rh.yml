@@ -23,7 +23,7 @@ jobs:
           pip install xarray==2023.6.0 metpy==1.6.2 matplotlib==3.8.0 cartopy numpy==1.26.4 netCDF4==1.5.7 siphon==0.9 protobuf==3.20.3 pandas==1.5.3
       - name: Delete old plots if they exist
         run: |
-          find plots/models/gfs/soundings/rh/ -name 'sounding_*.png' -exec rm {} +
+          find models/gfs/ -name 'sounding_*.png' -exec rm {} +
       
       - name: Run gfs_forecast_sounding_rh.py
         run: python gfs_forecast_sounding_rh.py
@@ -39,7 +39,7 @@ jobs:
           # Pop the stash
           git stash pop
           # Add changes to staging area again
-          git add plots/models/gfs/soundings/rh/sounding_*.png
+          git add models/gfs/sounding_*.png
           # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "No changes to commit."
