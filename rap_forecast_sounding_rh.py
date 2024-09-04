@@ -62,7 +62,7 @@ for i in range(0, max_forecasthours + 1):
     'Pressure': pressure,  
     'u_wind': u_wind,
     'v_wind': v_wind
-})
+    })
     p = df['Pressure'].values * units.hPa
     p_decrease = p[::-1]
     T = df['Temperature'].values * units.degC
@@ -76,6 +76,8 @@ for i in range(0, max_forecasthours + 1):
     wnd_spd = mpcalc.wind_speed(u, v)
 
     prof = mpcalc.parcel_profile(p_decrease, T_1[0], Td_1[0]).to('degC')
+    wb = mpcalc.wet_bulb_temperature(p_decrease, T_1, Td_1).to('degC')
+    sbcape, sbcin = mpcalc.surface_based_cape_cin(p_decrease, T_1, Td_1)
     #ml_t, ml_td = mpcalc.mixed_layer(p, T, Td, depth=50 * units.hPa)
     #ml_p, _, _ = mpcalc.mixed_parcel(p, T, Td, depth=50 * units.hPa)
     #mlcape, mlcin = mpcalc.mixed_layer_cape_cin(p, T, prof, depth=50 * units.hPa)
@@ -90,9 +92,34 @@ for i in range(0, max_forecasthours + 1):
     skew.plot(p, T, 'r')
     skew.plot(p, Td, 'g')
     skew.plot_barbs(p, u, v)
-    skew.plot(p_decrease, prof, 'k', linewidth=2, label='SBCAPE PARCEL PATH', linestyle='-', dashes=(3, 1))
+    if np.array(sbcape) > 250: 
+        skew.plot(p_decrease, prof, 'k', linewidth=2, label='SBCAPE PARCEL PATH', linestyle='-', dashes=(3, 1))
+
+    skew.plot(p_decrease, wb, 'lightskyblue', label='Wetbulb', linewidth=2)
     plt.ylabel('Pressure (hPa)')
     plt.xlabel('Temperature (C)')
+
+    T_degF = T_1.to(units.degF)
+    T_degF_label = '{}°F'.format(int(T_degF[0].magnitude))
+    plt.annotate(T_degF_label, (T_1[0], p_decrease[0]), textcoords="offset points", xytext=(22, 0),
+                 fontsize=11, color='red', weight='bold', alpha=0.7, ha='center')
+    Td_degF = Td_1.to(units.degF)
+    Td_degF_label = '{}°F'.format(int(Td_degF[0].magnitude))
+    plt.annotate(Td_degF_label, (Td_1[0], p_decrease[0]), textcoords="offset points", xytext=(-24, 0),
+                 fontsize=11, color='green', weight='bold', alpha=0.7, ha='center')
+
+    lcl_pressure, lcl_temperature = mpcalc.lcl(p_decrease[0], T_1[0], Td_1[0])
+    lfc_pressure, lfc_temperature = mpcalc.lfc(p_decrease, T_1, Td_1)
+    el_pressure, el_temperature = mpcalc.el(p_decrease, T_1, Td_1, prof)
+
+    plt.text((0.80), (lcl_pressure), "\u2014 LCL \u2014", weight='bold',color='black',             
+         alpha=0.9, fontsize=11, transform=skew.ax.get_yaxis_transform())
+
+    plt.text((0.80), (lfc_pressure), "\u2014 LFC \u2014", weight='bold',color='black',             
+         alpha=0.9, fontsize=11, transform=skew.ax.get_yaxis_transform())
+
+    plt.text((0.80), (el_pressure), "\u2014 EL \u2014", weight='bold',color='black',             
+         alpha=0.9, fontsize=11, transform=skew.ax.get_yaxis_transform())
     
     plt.title('{} RAP: Forecast Sounding | {} | FH: {}'.format(ds[ds_timedim][0].dt.strftime('%H00 UTC').item(), ds[ds_timedim][i].dt.strftime('%Y-%m-%d %H00 UTC').item(), i))
     plt.savefig('models/rap/sounding_{}.png'.format(i), dpi=450)
