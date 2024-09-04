@@ -61,7 +61,7 @@ for i in range(0, 29):
     'v_wind': v_wind
 })
     p = df['Pressure'].values * units.hPa
-    p_decrease = p[::-1]
+    p_decrease = p[::-1][0:30]
     T = df['Temperature'].values * units.degC
     T_1 = df['Temperature'][::-1].values * units.degC
     Td = df['Dewpoint'].values * units.degC
@@ -72,7 +72,7 @@ for i in range(0, 29):
     wnd_drct = mpcalc.wind_direction(u, v)
     wnd_spd = mpcalc.wind_speed(u, v)
 
-    #prof = mpcalc.parcel_profile(p_decrease, T_1[0], Td_1[0]).to('degC')
+    prof = mpcalc.parcel_profile(p_decrease, T_1[0], Td_1[0]).to('degC')
     #ml_t, ml_td = mpcalc.mixed_layer(p, T, Td, depth=50 * units.hPa)
     #ml_p, _, _ = mpcalc.mixed_parcel(p, T, Td, depth=50 * units.hPa)
     #mlcape, mlcin = mpcalc.mixed_layer_cape_cin(p, T, prof, depth=50 * units.hPa)
@@ -87,7 +87,7 @@ for i in range(0, 29):
     skew.plot(p, T, 'r')
     skew.plot(p, Td, 'g')
     skew.plot_barbs(p, u, v)
-    #skew.plot(p_decrease, prof, 'k', linewidth=2, label='SBCAPE PARCEL PATH', linestyle='-', dashes=(3, 1))
+    skew.plot(p_decrease, prof, 'k', linewidth=2, label='SBCAPE PARCEL PATH', linestyle='-', dashes=(3, 1))
     plt.ylabel('Pressure (hPa)')
     plt.xlabel('Temperature (C)')
     
