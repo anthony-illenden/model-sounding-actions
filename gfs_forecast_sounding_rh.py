@@ -63,9 +63,9 @@ for i in range(0, 29):
     p = df['Pressure'].values * units.hPa
     p_decrease = p[::-1][0:30]
     T = df['Temperature'].values * units.degC
-    T_1 = df['Temperature'][::-1].values * units.degC
+    T_1 = df['Temperature'][::-1][0:30].values * units.degC
     Td = df['Dewpoint'].values * units.degC
-    Td_1 = df['Dewpoint'][::-1].values * units.degC
+    Td_1 = df['Dewpoint'][::-1][0:30].values * units.degC
     u = df['u_wind'].values * 1.94384* units.knots
     v = df['v_wind'].values * 1.94384* units.knots
 
