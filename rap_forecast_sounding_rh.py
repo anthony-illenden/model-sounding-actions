@@ -85,17 +85,17 @@ for i in range(0, max_forecasthours + 1):
     fig = plt.figure(figsize=(9, 9))
     skew = SkewT(fig, rotation=45)
 
-    skew.plot_dry_adiabats(alpha=0.25, linewidth=1)
-    skew.plot_moist_adiabats(alpha=0.25, linewidth=1)
-    skew.plot_mixing_lines(alpha=0.25, linewidth=1)
+    skew.plot_dry_adiabats(alpha=0.25, linewidth=1, label='Dry Adiabats')
+    skew.plot_moist_adiabats(alpha=0.25, linewidth=1, label='Moist Adiabats')
+    skew.plot_mixing_lines(alpha=0.25, linewidth=1, label='Isohumes')
 
-    skew.plot(p, T, 'r')
-    skew.plot(p, Td, 'g')
+    skew.plot(p, T, 'r', zorder=2, label='Air Temperature')
+    skew.plot(p, Td, 'g', zorder=1, label='Dewpoint Temperature')
     skew.plot_barbs(p, u, v)
     if np.array(sbcape) > 250: 
         skew.plot(p_decrease, prof, 'k', linewidth=2, label='SBCAPE PARCEL PATH', linestyle='-', dashes=(3, 1))
 
-    skew.plot(p_decrease, wb, 'lightskyblue', label='Wetbulb', linewidth=2)
+    skew.plot(p_decrease, wb, 'lightskyblue', linewidth=2, zorder=0, label='Wetbulb Temperature')
     plt.ylabel('Pressure (hPa)')
     plt.xlabel('Temperature (C)')
 
@@ -120,6 +120,8 @@ for i in range(0, max_forecasthours + 1):
 
     plt.text((0.80), (el_pressure), "\u2014 EL \u2014", weight='bold',color='black',             
          alpha=0.9, fontsize=11, transform=skew.ax.get_yaxis_transform())
+    
+    plt.legend(loc='upper left')
     
     plt.title('{} RAP: Forecast Sounding | {} | FH: {}'.format(ds[ds_timedim][0].dt.strftime('%H00 UTC').item(), ds[ds_timedim][i].dt.strftime('%Y-%m-%d %H00 UTC').item(), i))
     plt.savefig('models/rap/sounding_{}.png'.format(i), dpi=450)
